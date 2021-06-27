@@ -3,7 +3,10 @@ package com.uplus.sdreport.controller;
 import com.uplus.sdreport.dto.ReportDto;
 import com.uplus.sdreport.service.ReportService;
 import com.uplus.sdreport.vo.RequestDeleteContent;
+import com.uplus.sdreport.vo.ResponseContent;
 import com.uplus.sdreport.vo.ResponseReport;
+import io.micrometer.core.annotation.Timed;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +21,9 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Controller
-@RequestMapping("/report-service")
+@RequestMapping("/")
 public class ReportController {
 
     ReportService reportService;
@@ -45,7 +49,9 @@ public class ReportController {
 
 
     @GetMapping("/report")
+    @Timed(value="report.list", longTask = true)
     public String viewReport(Model model){
+        log.info("{viewReport} list report ");
 
         Iterable<ReportDto> reportDto = reportService.getReportAll();
 
@@ -61,14 +67,20 @@ public class ReportController {
 
 
     @GetMapping("/{contentId}/report")
-    public ModelAndView reportContent(@PathVariable String contentId){
+    @Timed(value="report.detail", longTask = true)
+    public ModelAndView selectDetailContent(@PathVariable String contentId){
+        log.info("{selectDetailContent} contentId: "+ contentId);
+
         ModelAndView mav= new ModelAndView("content/reportContent");
 
-        ReportDto reportDto = reportService.getReportByContentId(contentId);
+        ResponseContent responseContent = reportService.getReportByContentId(contentId);
 
-
-        mav.addObject("contentName", reportDto.getContentName());
-        mav.addObject("cnt", reportDto.getCnt());
+        mav.addObject("contentId", responseContent.getContentId());
+        mav.addObject("contentName", responseContent.getContentName());
+        mav.addObject("url", responseContent.getUrl());
+        mav.addObject("creator", responseContent.getCreator());
+        mav.addObject("cp", responseContent.getCp());
+        mav.addObject("category", responseContent.getCategory());
 
         mav.addObject("server_address", env.getProperty("eureka.instance.hostname"));
         mav.addObject("server_port", env.getProperty("local.server.port"));
@@ -78,7 +90,10 @@ public class ReportController {
     }
 
     @PostMapping("/report/deleteContent")
+    @Timed(value="report.delete", longTask = true)
     public ResponseEntity<ResponseReport> deleteReport(@RequestBody RequestDeleteContent requestDeleteContent){
+        log.info("{deleteReport} contentId: "+ requestDeleteContent.getContentId());
+
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 

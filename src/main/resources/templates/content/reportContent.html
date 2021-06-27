@@ -58,10 +58,22 @@
             <table>
                 <tbody>
                 <tr>
-                    <td> 컨텐츠명 : </td><td th:text="${contentName}"></td>
+                    <td width="100"> 아이디 : </td><td width="600"><input type="text" readonly class="form-control" id="contentId" name="contentId" th:value="${contentId}"></td>
                 </tr>
                 <tr>
-                    <td> cnt : </td><td th:text="${cnt}"></td>
+                    <td> 이름 : </td><td><input type="text" readonly class="form-control" id="contentName" name="contentName" th:value="${contentName}"></td>
+                </tr>
+                <tr>
+                    <td> 경로 : </td><td><input type="text" readonly class="form-control" id="url" name="url" th:value="${url}"></td>
+                </tr>
+                <tr>
+                    <td> 제작자 : </td><td><input type="text" readonly class="form-control"  id="creator" name="creator" th:value="${creator}"></td>
+                </tr>
+                <tr>
+                    <td> CP : </td><td><input type="text" readonly class="form-control" id="cp" name="cp" th:value="${cp}"></td>
+                </tr>
+                <tr>
+                    <td> 카테고리 : </td><td><input type="text" readonly class="form-control"  id="category" name="category" th:value="${category}"></td>
                 </tr>
                 </tbody>
             </table>
